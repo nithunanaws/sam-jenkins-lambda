@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-lambda
+
+Globals:
+  Function:
+    Timeout: 20
+
+Resources:
+  ScheduledLambdaFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: .
+      Handler: org.springframework.cloud.function.adapter.aws.FunctionInvoker
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Environment: 
+        Variables:
+          MAIN_CLASS: com.nithunan.aws.SamLambdaApplication
+          SPRING_CLOUD_FUNCTION_DEFINITION: process
+          MESSAGE: Welcome
+      Events:
+        MySchedule:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(1 minute)'
+            Name: MySchedule
+            Description: My Test Schedule
+            Enabled: true
+
